@@ -822,6 +822,7 @@ Respond ONLY in this exact JSON. No markdown, no preamble:
     })
     .then(r => r.json())
     .then(data => {
+      if (!data.content) { document.getElementById('loadingView').innerHTML = '<p style="color:#c0392b;font-size:15px;padding:2rem 0;">API error: ' + JSON.stringify(data) + '</p>'; return; }
       const raw = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
       const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
 
