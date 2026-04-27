@@ -740,7 +740,7 @@
       body: JSON.stringify(payload)
     }).then(() => {
       document.getElementById('savedNotice').textContent = 'Saved to tutor record.';
-    }).catch(() => {
+    }).catch((err) => {
       document.getElementById('savedNotice').textContent = 'Could not save to tutor record — please screenshot this page.';
     });
   }
@@ -811,11 +811,11 @@ Respond ONLY in this exact JSON. No markdown, no preamble:
   ]
 }`;
 
-    fetch('https://api.anthropic.com/v1/messages', {
+    fetch('https://pm7000-api.paulpostle.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 1400,
         messages: [{ role: 'user', content: prompt }]
       })
@@ -836,8 +836,8 @@ Respond ONLY in this exact JSON. No markdown, no preamble:
         renderResult(parsed);
       });
     })
-    .catch(() => {
-      document.getElementById('loadingView').innerHTML = '<p style="color:#c0392b;font-size:15px;padding:2rem 0;">Something went wrong. Please try again.</p>';
+    .catch((err) => {
+      document.getElementById('loadingView').innerHTML = '<p style="color:#c0392b;font-size:15px;padding:2rem 0;">Error: ' + err.message + '</p>';
     });
   }
 
