@@ -733,16 +733,10 @@
   }
 
   function saveToSheet(payload) {
-    fetch(SHEET_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).then(() => {
-      document.getElementById('savedNotice').textContent = 'Saved to tutor record.';
-    }).catch((err) => {
-      document.getElementById('savedNotice').textContent = 'Could not save to tutor record — please screenshot this page.';
-    });
+    const params = new URLSearchParams();
+    Object.keys(payload).forEach(k => params.append(k, String(payload[k] || '')));
+    fetch(SHEET_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' });
+    document.getElementById('savedNotice').textContent = 'Saved to tutor record.';
   }
 
   function generate() {
@@ -795,7 +789,7 @@ Student's identified weakness: ${a.c3_weak}
 CRITERION 4 — Reflection & Documentation (LO4, LO5)
 Process reel: ${a.c4_reel}
 Portfolio documentation: ${a.c4_portfolio}
-Critical reflection: ${a.c4_reflection}
+Critical reflection (MAXIMUM 200 words — this is a hard limit, not a minimum. Do not suggest writing more than 200 words): ${a.c4_reflection}
 Self-rating: ${a.c4_rating}
 Student's identified weakness: ${a.c4_weak}
 
