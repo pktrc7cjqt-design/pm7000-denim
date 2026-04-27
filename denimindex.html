@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PM7000 — Denim Brief Progress Check</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      background: #ffffff;
+      color: #1a1a1a;
+      padding: 3rem 1.5rem 5rem;
+    }
+
+    .wrap {
+      max-width: 660px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 300;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 1rem;
+    }
+
+    .intro {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #555;
+      max-width: 540px;
+      margin-bottom: 0.75rem;
+    }
+
+    .deadline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: #c0392b;
+      margin-bottom: 2.5rem;
+    }
+
+    .deadline::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #c0392b;
+      flex-shrink: 0;
+    }
+
+    .meta-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 480px) {
+      .meta-row { grid-template-columns: 1fr; }
+    }
+
+    .meta-field label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 6px;
+    }
+
+    .meta-field input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 0.5px solid #ccc;
+      border-radius: 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 300;
+      color: #1a1a1a;
+      padding: 6px 0;
+      outline: none;
+    }
+
+    .meta-field input:focus { border-bottom-color: #1a1a1a; }
+
+    .divider {
+      height: 0.5px;
+      background: #e5e5e5;
+      margin: 2.5rem 0;
+    }
+
+    .crit-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .crit-lo {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: #aaa;
+    }
+
+    .crit-title {
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+
+    .sub-prompt { margin-bottom: 1.5rem; }
+
+    .sub-label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .sub-guide {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      background: #f7f7f7;
+      border: 0.5px solid #e0e0e0;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 300;
+      color: #1a1a1a;
+      padding: 12px 14px;
+      resize: none;
+      outline: none;
+      min-height: 80px;
+      line-height: 1.6;
+    }
+
+    textarea:focus { border-color: #999; }
+
+    .rating-label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin: 1.5rem 0 10px;
+    }
+
+    .rating-options {
+      display: flex;
+      border: 0.5px solid #ccc;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .rating-options label {
+      flex: 1;
+      text-align: center;
+      cursor: pointer;
+      padding: 10px 4px;
+      border-right: 0.5px solid #e5e5e5;
+      transition: background 0.15s;
+    }
+
+    .rating-options label:last-child { border-right: none; }
+    .rating-options input[type=radio] { display: none; }
+
+    .rating-options label:has(input:checked) { background: #f0f0f0; }
+
+    .grade {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .band {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    .rating-options label:has(input:checked) .grade { color: #1a1a1a; }
+
+    .weak-label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin: 1rem 0 8px;
+    }
+
+    .weak-textarea {
+      background: transparent;
+      border: none;
+      border-bottom: 0.5px solid #ccc;
+      border-radius: 0;
+      min-height: 48px;
+      padding: 6px 0;
+    }
+
+    .weak-textarea:focus { border-bottom-color: #1a1a1a; }
+
+    .checklist-title {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 1rem;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 0.5px solid #e5e5e5;
+      cursor: pointer;
+    }
+
+    .check-item:last-child { border-bottom: none; }
+
+    .check-item input[type=checkbox] {
+      margin-top: 3px;
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      accent-color: #1a1a1a;
+      cursor: pointer;
+    }
+
+    .check-item span {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .generate-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 16px 28px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 17px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    .generate-btn:hover { opacity: 0.8; }
+
+    .small-note {
+      font-size: 12px;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    /* Loading */
+    #loadingView { display: none; padding: 3rem 0; }
+
+    .loading-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: #aaa;
+      margin-bottom: 1.5rem;
+    }
+
+    .loading-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 300;
+      color: #ccc;
+      padding: 8px 0;
+      transition: color 0.4s;
+    }
+
+    .loading-step.active { color: #1a1a1a; }
+
+    .loading-step .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #ddd;
+      flex-shrink: 0;
+      transition: background 0.4s;
+    }
+
+    .loading-step.active .dot { background: #1a1a1a; }
+
+    /* Result */
+    #resultView { display: none; }
+
+    .result-disclaimer {
+      font-size: 13px;
+      font-weight: 300;
+      color: #999;
+      line-height: 1.6;
+      border-left: 2px solid #e0e0e0;
+      padding-left: 14px;
+      margin-bottom: 2rem;
+    }
+
+    .priority-block {
+      border: 0.5px solid #f5c6c6;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 2.5rem;
+      background: #fff9f9;
+    }
+
+    .priority-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #c0392b;
+      margin-bottom: 6px;
+    }
+
+    .priority-block p {
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    .result-crit { margin-bottom: 2.5rem; }
+
+    .result-crit-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 1rem;
+    }
+
+    .status-block {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .marker {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .marker-solid { background: #1a1a1a; color: #fff; }
+    .marker-gap { background: #fdecea; color: #c0392b; }
+
+    .status-text {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    .tier-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin: 1rem 0 8px;
+    }
+
+    .action-item {
+      display: flex;
+      gap: 12px;
+      align-items: baseline;
+      padding: 9px 0;
+      border-bottom: 0.5px solid #eee;
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .action-item:last-child { border-bottom: none; }
+
+    .action-n {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #bbb;
+      flex-shrink: 0;
+      min-width: 18px;
+    }
+
+    .action-pass { color: #276221; }
+    .action-merit { color: #1a4f8a; }
+
+    .reminder-block {
+      border-top: 0.5px solid #e0e0e0;
+      padding-top: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .reminder-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 0.75rem;
+    }
+
+    .reminder-block p {
+      font-size: 14px;
+      font-weight: 300;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 0.5px solid #ccc;
+      border-radius: 6px;
+      padding: 12px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      color: #1a1a1a;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-outline:hover { background: #f5f5f5; }
+
+    .saved-notice {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #2d7a2d;
+      margin-top: 0.75rem;
+      min-height: 1.4em;
+    }
+
+    .footer-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: #bbb;
+      margin-top: 3rem;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- FORM -->
+  <div id="formView">
+    <p class="eyebrow">PM7000 · Denim Collaborative Brief · Kingston School of Art</p>
+    <h1>Progress Check<br>&amp; Action Plan</h1>
+    <p class="intro">Complete honestly. Your responses go directly to Claude, which will assess where you are against the four brief criteria and generate a specific action list — what you need to do to reach a pass, and what would push you toward merit or distinction.</p>
+    <p class="intro" style="margin-top:0.5rem;">The more honestly and specifically you write, the more useful the output will be. Vague answers produce vague feedback.</p>
+    <div class="deadline">Submission deadline — 7 May 2026, midday</div>
+
+    <div class="meta-row">
+      <div class="meta-field"><label>Name</label><input type="text" id="meta_name" placeholder="Your name" /></div>
+      <div class="meta-field"><label>K Number</label><input type="text" id="meta_k" placeholder="K0000000" /></div>
+      <div class="meta-field"><label>Discipline</label><input type="text" id="meta_disc" placeholder="e.g. Illustration" /></div>
+      <div class="meta-field"><label>Group name or number</label><input type="text" id="meta_group" placeholder="" /></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- C1 -->
+    <div class="crit-header"><span class="crit-lo">LO1 · LO2</span><span class="crit-title">1 — Creative identity &amp; experiments</span></div>
+    <div class="sub-prompt">
+      <span class="sub-label">Material and surface experiments</span>
+      <p class="sub-guide">Describe the experiments you have done personally with denim or related materials. What different approaches, techniques or surfaces did you test? What worked, what didn't, and what did that teach you?</p>
+      <textarea id="c1_experiments" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <div class="sub-prompt">
+      <span class="sub-label">Cultural or personal perspective</span>
+      <p class="sub-guide">How does your own background, culture or experience appear in your individual contribution? Be specific — not just "I am from Korea so I thought about indigo" but how that actually shaped a decision, image, material choice, or angle.</p>
+      <textarea id="c1_identity" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <div class="sub-prompt">
+      <span class="sub-label">Volume and documentation</span>
+      <p class="sub-guide">How many distinct experiments or test pieces do you have? Are they documented — photographed, scanned, captioned — and ready to include in your submission?</p>
+      <textarea id="c1_docs" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <span class="rating-label">My honest rating for this criterion</span>
+    <div class="rating-options">
+      <label><input type="radio" name="r1" value="70+"><span class="grade">A+/A/A−</span><span class="band">70+</span></label>
+      <label><input type="radio" name="r1" value="60-69"><span class="grade">B+/B/B−</span><span class="band">60–69</span></label>
+      <label><input type="radio" name="r1" value="50-59"><span class="grade">C+/C/C−</span><span class="band">50–59</span></label>
+      <label><input type="radio" name="r1" value="45-49"><span class="grade">FM</span><span class="band">45–49</span></label>
+      <label><input type="radio" name="r1" value="44-"><span class="grade">F</span><span class="band">44−</span></label>
+    </div>
+    <span class="weak-label">Weakest area in this section — one specific action before submission</span>
+    <textarea id="c1_weak" class="weak-textarea" oninput="grow(this)" placeholder="Be specific..."></textarea>
+
+    <div class="divider"></div>
+
+    <!-- C2 -->
+    <div class="crit-header"><span class="crit-lo">LO3</span><span class="crit-title">2 — Collaboration &amp; group contribution</span></div>
+    <div class="sub-prompt">
+      <span class="sub-label">Your role and contribution</span>
+      <p class="sub-guide">What has been your specific, named role in the group? What decisions, tasks, or outputs have you been responsible for? This should be concrete — not "I helped with ideas" but what you actually made or led.</p>
+      <textarea id="c2_role" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <div class="sub-prompt">
+      <span class="sub-label">Discipline integration</span>
+      <p class="sub-guide">How does your discipline specialism — Illustration, Graphic Design, Fashion, or Interiors — actually connect to the group outcome? Where is the cross-disciplinary exchange most visible in the work?</p>
+      <textarea id="c2_discipline" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <div class="sub-prompt">
+      <span class="sub-label">Communication and decision-making</span>
+      <p class="sub-guide">How does the group communicate? How are decisions made? Have there been any tensions or difficulties — and how have you handled them? Be honest.</p>
+      <textarea id="c2_comms" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <span class="rating-label">My honest rating for this criterion</span>
+    <div class="rating-options">
+      <label><input type="radio" name="r2" value="70+"><span class="grade">A+/A/A−</span><span class="band">70+</span></label>
+      <label><input type="radio" name="r2" value="60-69"><span class="grade">B+/B/B−</span><span class="band">60–69</span></label>
+      <label><input type="radio" name="r2" value="50-59"><span class="grade">C+/C/C−</span><span class="band">50–59</span></label>
+      <label><input type="radio" name="r2" value="45-49"><span class="grade">FM</span><span class="band">45–49</span></label>
+      <label><input type="radio" name="r2" value="44-"><span class="grade">F</span><span class="band">44−</span></label>
+    </div>
+    <span class="weak-label">Weakest area in this section — one specific action before submission</span>
+    <textarea id="c2_weak" class="weak-textarea" oninput="grow(this)" placeholder="Be specific..."></textarea>
+
+    <div class="divider"></div>
+
+    <!-- C3 -->
+    <div class="crit-header"><span class="crit-lo">LO1 · LO3</span><span class="crit-title">3 — Group outcome</span></div>
+    <div class="sub-prompt">
+      <span class="sub-label">Form and state of the outcome</span>
+      <p class="sub-guide">What is your group producing — garments, branding, illustration, installation, pop-up, digital showcase, or a combination? Where does it currently stand? What is complete and what is still being made or resolved?</p>
+      <textarea id="c3_form" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <div class="sub-prompt">
+      <span class="sub-label">Theme and material coherence</span>
+      <p class="sub-guide">What is the central idea or theme the outcome communicates? How is denim or related materials used — not just as surface but as something meaningful to the concept? Would an audience understand the message without explanation?</p>
+      <textarea id="c3_theme" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <div class="sub-prompt">
+      <span class="sub-label">What is still unresolved</span>
+      <p class="sub-guide">What specifically still needs to be made, edited, or decided before submission? Who in the group is responsible for what?</p>
+      <textarea id="c3_gaps" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <span class="rating-label">My honest rating for this criterion</span>
+    <div class="rating-options">
+      <label><input type="radio" name="r3" value="70+"><span class="grade">A+/A/A−</span><span class="band">70+</span></label>
+      <label><input type="radio" name="r3" value="60-69"><span class="grade">B+/B/B−</span><span class="band">60–69</span></label>
+      <label><input type="radio" name="r3" value="50-59"><span class="grade">C+/C/C−</span><span class="band">50–59</span></label>
+      <label><input type="radio" name="r3" value="45-49"><span class="grade">FM</span><span class="band">45–49</span></label>
+      <label><input type="radio" name="r3" value="44-"><span class="grade">F</span><span class="band">44−</span></label>
+    </div>
+    <span class="weak-label">Weakest area in this section — one specific action before submission</span>
+    <textarea id="c3_weak" class="weak-textarea" oninput="grow(this)" placeholder="Be specific..."></textarea>
+
+    <div class="divider"></div>
+
+    <!-- C4 -->
+    <div class="crit-header"><span class="crit-lo">LO4 · LO5</span><span class="crit-title">4 — Reflection &amp; documentation</span></div>
+    <div class="sub-prompt">
+      <span class="sub-label">Process reel</span>
+      <p class="sub-guide">Do you have a process reel or video showing your work in development — experiments, making, group sessions, material tests? Describe what you have, how long it is, and where it will be hosted or linked. If you don't have one yet, say so.</p>
+      <textarea id="c4_reel" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <div class="sub-prompt">
+      <span class="sub-label">Portfolio documentation</span>
+      <p class="sub-guide">How is your individual work documented — posts, captions, photographs, sketches, annotations? Is it curated and captioned in a way that tells the story of your process, or is it a collection of images without context?</p>
+      <textarea id="c4_portfolio" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <div class="sub-prompt">
+      <span class="sub-label">Critical reflection</span>
+      <p class="sub-guide">Have you started your 200-word critical reflection? This must go beyond description — it should analyse your global influences, your experience of collaboration across disciplines, and what you have learned. Where are you with it?</p>
+      <textarea id="c4_reflection" oninput="grow(this)" placeholder="Write here..."></textarea>
+    </div>
+    <span class="rating-label">My honest rating for this criterion</span>
+    <div class="rating-options">
+      <label><input type="radio" name="r4" value="70+"><span class="grade">A+/A/A−</span><span class="band">70+</span></label>
+      <label><input type="radio" name="r4" value="60-69"><span class="grade">B+/B/B−</span><span class="band">60–69</span></label>
+      <label><input type="radio" name="r4" value="50-59"><span class="grade">C+/C/C−</span><span class="band">50–59</span></label>
+      <label><input type="radio" name="r4" value="45-49"><span class="grade">FM</span><span class="band">45–49</span></label>
+      <label><input type="radio" name="r4" value="44-"><span class="grade">F</span><span class="band">44−</span></label>
+    </div>
+    <span class="weak-label">Weakest area in this section — one specific action before submission</span>
+    <textarea id="c4_weak" class="weak-textarea" oninput="grow(this)" placeholder="Be specific..."></textarea>
+
+    <div class="divider"></div>
+
+    <!-- Checklist -->
+    <span class="checklist-title">Submission checklist — tick only when confirmed</span>
+    <div class="check-item"><input type="checkbox" id="chk1"><label for="chk1"><span>Process reel uploaded and publicly accessible (OneDrive, YouTube, or Vimeo) with a working link included in the portfolio</span></label></div>
+    <div class="check-item"><input type="checkbox" id="chk2"><label for="chk2"><span>200-word critical reflection included — or 5-minute video equivalent — covering global influences and collaboration</span></label></div>
+    <div class="check-item"><input type="checkbox" id="chk3"><label for="chk3"><span>Harvard references and bibliography complete for all research sources throughout the portfolio</span></label></div>
+    <div class="check-item"><input type="checkbox" id="chk4"><label for="chk4"><span>Generative AI Declaration completed using the Course Leader's template and included as the final page</span></label></div>
+    <div class="check-item"><input type="checkbox" id="chk5"><label for="chk5"><span>Physical artefacts clearly labelled with name and K number and left in discipline studio by submission day</span></label></div>
+    <div class="check-item"><input type="checkbox" id="chk6"><label for="chk6"><span>Both components present: your individual research and experiments, and the group project outcome with your contribution clearly accounted for</span></label></div>
+
+    <div class="divider"></div>
+
+    <button class="generate-btn" onclick="generate()">Generate action plan ↗</button>
+    <p class="small-note">Your responses are read by Claude and saved to a tutor record · Output is indicative only · Not a confirmed mark<br>PM7000 · Graduate Diploma Creative Practice · Kingston School of Art</p>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadingView">
+    <p class="loading-eyebrow">Generating action plan</p>
+    <div class="loading-step" id="ls1"><div class="dot"></div>Reading your responses</div>
+    <div class="loading-step" id="ls2"><div class="dot"></div>Applying Denim brief criteria</div>
+    <div class="loading-step" id="ls3"><div class="dot"></div>Mapping to PM7000 learning outcomes</div>
+    <div class="loading-step" id="ls4"><div class="dot"></div>Identifying what you need to do</div>
+    <div class="loading-step" id="ls5"><div class="dot"></div>Saving to tutor record</div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultView">
+    <p class="eyebrow">PM7000 · Denim Brief · Action Plan</p>
+    <h1>Your action plan</h1>
+    <p class="result-disclaimer">Generated from your self-assessment responses. This reflects what you have described — not a reading of your actual work or portfolio. No design work, outcomes, or visual material has been seen. The confirmed mark is determined by the module tutor following submission of the actual portfolio against PM7000 Learning Outcomes and AG1 2025–26 Level 7 Descriptors.</p>
+    <div id="priorityBlock"></div>
+    <div id="resultBody"></div>
+    <div class="reminder-block">
+      <div class="reminder-label">Before you submit — non-negotiable</div>
+      <p>Your <strong style="font-weight:500;">200-word critical reflection</strong> is a mandatory component. It must go beyond description — analyse your global influences, your experience of cross-disciplinary collaboration, and what you have learned. A 5-minute video reflection is an accepted alternative.<br><br>
+      <strong style="font-weight:500;">Harvard referencing</strong> must be applied consistently throughout your portfolio. All research images, texts, and sources must be cited inline and listed in a bibliography at the end.<br><br>
+      <strong style="font-weight:500;">Generative AI declaration</strong> — if you used any GAI tool at any stage, declare it using the Course Leader's template. This goes on the final page of your submission. Omitting it is an academic offence.</p>
+    </div>
+    <div class="result-actions">
+      <button class="btn-outline" onclick="window.print()">Print / save as PDF</button>
+      <button class="btn-outline" onclick="restart()">New submission</button>
+    </div>
+    <p class="saved-notice" id="savedNotice"></p>
+    <div class="footer-note">
+      PM7000 · Graduate Diploma Creative Practice · Kingston School of Art<br>
+      Aligned to Denim Brief criteria and AG1 2025–26 Level 7 Descriptors<br>
+      This tool assesses what students report — no design work or outcomes have been reviewed.
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyfaUC5Ccu_G4VMrBJK6UaAfAe3q3NT5tNbgq1dGkaP6-VIxf5Z4r6QueWAiRSIy8dEGQ/exec';
+
+  function grow(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }
+
+  function val(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function radio(name) {
+    const el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : 'not rated';
+  }
+
+  function animateLoading(cb) {
+    const steps = ['ls1','ls2','ls3','ls4','ls5'];
+    let i = 0;
+    function next() {
+      if (i > 0) {
+        const prev = document.getElementById(steps[i-1]);
+        prev.className = 'loading-step done';
+        prev.querySelector('.dot').style.background = '#ddd';
+      }
+      if (i < steps.length) {
+        document.getElementById(steps[i]).className = 'loading-step active';
+        i++;
+        setTimeout(next, 900);
+      } else { cb(); }
+    }
+    next();
+  }
+
+  function saveToSheet(payload) {
+    fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(() => {
+      document.getElementById('savedNotice').textContent = 'Saved to tutor record.';
+    }).catch(() => {
+      document.getElementById('savedNotice').textContent = 'Could not save to tutor record — please screenshot this page.';
+    });
+  }
+
+  function generate() {
+    const meta = {
+      name: val('meta_name') || 'Unknown',
+      k: val('meta_k') || 'Unknown',
+      disc: val('meta_disc') || 'Not specified',
+      group: val('meta_group') || 'Not specified'
+    };
+
+    const a = {
+      c1_experiments: val('c1_experiments'), c1_identity: val('c1_identity'),
+      c1_docs: val('c1_docs'), c1_rating: radio('r1'), c1_weak: val('c1_weak'),
+      c2_role: val('c2_role'), c2_discipline: val('c2_discipline'),
+      c2_comms: val('c2_comms'), c2_rating: radio('r2'), c2_weak: val('c2_weak'),
+      c3_form: val('c3_form'), c3_theme: val('c3_theme'),
+      c3_gaps: val('c3_gaps'), c3_rating: radio('r3'), c3_weak: val('c3_weak'),
+      c4_reel: val('c4_reel'), c4_portfolio: val('c4_portfolio'),
+      c4_reflection: val('c4_reflection'), c4_rating: radio('r4'), c4_weak: val('c4_weak')
+    };
+
+    document.getElementById('formView').style.display = 'none';
+    document.getElementById('loadingView').style.display = 'block';
+
+    const prompt = `You are a postgraduate design tutor at Kingston School of Art reviewing a student's self-assessment for the PM7000 Denim Collaborative Brief. Submission is midday 7 May 2026. Today is 27 April 2026 — 10 days to go.
+
+Student: ${meta.name} | K: ${meta.k} | Discipline: ${meta.disc} | Group: ${meta.group}
+
+CRITERION 1 — Creative Identity & Experiments (LO1, LO2)
+Material experiments: ${a.c1_experiments}
+Cultural/personal perspective: ${a.c1_identity}
+Volume and documentation: ${a.c1_docs}
+Self-rating: ${a.c1_rating}
+Student's identified weakness: ${a.c1_weak}
+
+CRITERION 2 — Collaboration & Group Contribution (LO3)
+Role and contribution: ${a.c2_role}
+Discipline integration: ${a.c2_discipline}
+Communication and decisions: ${a.c2_comms}
+Self-rating: ${a.c2_rating}
+Student's identified weakness: ${a.c2_weak}
+
+CRITERION 3 — Group Outcome (LO1, LO3)
+Form and state: ${a.c3_form}
+Theme and material coherence: ${a.c3_theme}
+What is still unresolved: ${a.c3_gaps}
+Self-rating: ${a.c3_rating}
+Student's identified weakness: ${a.c3_weak}
+
+CRITERION 4 — Reflection & Documentation (LO4, LO5)
+Process reel: ${a.c4_reel}
+Portfolio documentation: ${a.c4_portfolio}
+Critical reflection: ${a.c4_reflection}
+Self-rating: ${a.c4_rating}
+Student's identified weakness: ${a.c4_weak}
+
+Respond ONLY in this exact JSON. No markdown, no preamble:
+{
+  "topPriority": "One direct urgent sentence about the single most important thing to address in the next 48 hours.",
+  "overallBand": "One grade band label — e.g. C+/C/C- (50-59) — based on self-ratings and evidence described. Make clear this is self-reported.",
+  "criteria": [
+    { "name": "Creative Identity & Experiments", "solid": "One sentence.", "gap": "One sentence.", "passActions": ["action 1", "action 2"], "meritActions": ["action 1"] },
+    { "name": "Collaboration & Group Contribution", "solid": "...", "gap": "...", "passActions": ["...", "..."], "meritActions": ["..."] },
+    { "name": "Group Outcome", "solid": "...", "gap": "...", "passActions": ["...", "..."], "meritActions": ["..."] },
+    { "name": "Reflection & Documentation", "solid": "...", "gap": "...", "passActions": ["...", "...", "..."], "meritActions": ["..."] }
+  ]
+}`;
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1400,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    })
+    .then(r => r.json())
+    .then(data => {
+      const raw = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+      const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+
+      const fullPlan = parsed.criteria.map(c =>
+        `${c.name}\nSolid: ${c.solid}\nGap: ${c.gap}\nTo pass: ${c.passActions.join(' | ')}\nTo merit: ${c.meritActions.join(' | ')}`
+      ).join('\n\n');
+
+      saveToSheet({ ...meta, ...a, overallBand: parsed.overallBand, topPriority: parsed.topPriority, fullPlan });
+
+      animateLoading(() => {
+        document.getElementById('loadingView').style.display = 'none';
+        renderResult(parsed);
+      });
+    })
+    .catch(() => {
+      document.getElementById('loadingView').innerHTML = '<p style="color:#c0392b;font-size:15px;padding:2rem 0;">Something went wrong. Please try again.</p>';
+    });
+  }
+
+  function renderResult(data) {
+    document.getElementById('priorityBlock').innerHTML = `
+      <div class="priority-block">
+        <div class="priority-label">Priority — next 48 hours</div>
+        <p>${data.topPriority}</p>
+      </div>`;
+
+    let html = '';
+    data.criteria.forEach(c => {
+      html += `
+        <div class="result-crit">
+          <div class="result-crit-title">${c.name}</div>
+          <div class="status-block"><span class="marker marker-solid">Solid</span><span class="status-text">${c.solid}</span></div>
+          <div class="status-block"><span class="marker marker-gap">Gap</span><span class="status-text">${c.gap}</span></div>
+          <div class="tier-label" style="margin-top:1rem;">To reach a pass</div>
+          ${c.passActions.map((act,i) => `<div class="action-item"><span class="action-n">0${i+1}</span><span class="action-pass">${act}</span></div>`).join('')}
+          <div class="tier-label" style="margin-top:1rem;">To push toward merit or distinction</div>
+          ${c.meritActions.map((act,i) => `<div class="action-item"><span class="action-n">0${i+1}</span><span class="action-merit">${act}</span></div>`).join('')}
+        </div>
+        <div class="divider"></div>`;
+    });
+
+    document.getElementById('resultBody').innerHTML = html;
+    document.getElementById('resultView').style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  function restart() {
+    document.getElementById('resultView').style.display = 'none';
+    document.getElementById('formView').style.display = 'block';
+    document.querySelectorAll('textarea').forEach(t => { t.value = ''; t.style.height = 'auto'; });
+    document.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+    document.querySelectorAll('input[type=checkbox]').forEach(c => c.checked = false);
+    document.querySelectorAll('input[type=text]').forEach(i => i.value = '');
+    document.getElementById('savedNotice').textContent = '';
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
